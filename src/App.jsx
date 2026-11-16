@@ -155,65 +155,60 @@ export default function App() {
           <h2 className="text-sm font-semibold text-slate-300">진행 중인 업무 목록</h2>
           <div className="space-y-3">
             {todos.map(todo => (
-              <div key={todo.id} className="bg-[#1f2937]/50 border border-slate-800 p-3.5 sm:p-4 rounded-xl flex flex-col gap-3">
+              <div key={todo.id} className="bg-[#1f2937]/50 border border-slate-800 p-4 rounded-xl flex flex-col gap-3">
                 
                 {editingId === todo.id ? (
                   // 수정 모드
                   <div className="flex flex-col gap-2 w-full">
-                    <div className="flex gap-2">
-                      <input
-                        type="date"
-                        value={editDate}
-                        onChange={(e) => setEditDate(e.target.value)}
-                        className="bg-slate-900 text-white px-2 py-1.5 rounded text-xs border border-slate-700 w-1/2"
-                      />
-                    </div>
+                    <input
+                      type="date"
+                      value={editDate}
+                      onChange={(e) => setEditDate(e.target.value)}
+                      className="bg-slate-900 text-white px-3 py-2 rounded text-xs border border-slate-700 w-full sm:w-1/2"
+                    />
                     <input
                       type="text"
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
-                      className="w-full bg-slate-900 text-white px-3 py-2 rounded text-sm border border-slate-700 focus:outline-none"
+                      className="w-full bg-slate-900 text-white px-3 py-2.5 rounded text-sm border border-slate-700 focus:outline-none"
                     />
                     <div className="flex justify-end gap-2 mt-1">
-                      <button onClick={() => saveEdit(todo.id)} className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded text-xs font-bold">저장</button>
-                      <button onClick={() => setEditingId(null)} className="bg-slate-700 text-white px-3 py-1.5 rounded text-xs">취소</button>
+                      <button onClick={() => saveEdit(todo.id)} className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold">저장</button>
+                      <button onClick={() => setEditingId(null)} className="bg-slate-700 text-white px-3.5 py-1.5 rounded-lg text-xs">취소</button>
                     </div>
                   </div>
                 ) : (
-                  // 일반 표시 모드
+                  // 일반 표시 모드 (상단: 날짜/배지 / 하단: 업무내용 및 버튼)
                   <>
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-2.5 sm:gap-3 flex-1 min-w-0">
-                        <button onClick={() => toggleComplete(todo.id, todo.completed)} className="text-slate-400 hover:text-blue-400 mt-0.5 shrink-0">
-                          {todo.completed ? <CheckCircle className="text-blue-500" size={18} /> : <Circle size={18} />}
-                        </button>
-                        
-                        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
-                          <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[11px] font-semibold">
-                            {todo.category}
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-md text-[11px] font-semibold">
+                          {todo.category}
+                        </span>
+                        {todo.dueDate && (
+                          <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-0.5 rounded-md text-[11px] font-mono">
+                            {todo.dueDate} ({calculateDday(todo.dueDate)})
                           </span>
-                          {todo.dueDate && (
-                            <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded text-[11px] font-mono">
-                              {todo.dueDate} ({calculateDday(todo.dueDate)})
-                            </span>
-                          )}
-                        </div>
+                        )}
                       </div>
 
                       {/* 수정/삭제 버튼 */}
-                      <div className="flex gap-1.5 shrink-0">
-                        <button onClick={() => startEditing(todo)} className="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 p-1.5 sm:px-3 sm:py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
-                          <Edit2 size={12} /> <span className="hidden sm:inline">수정</span>
+                      <div className="flex gap-1.5">
+                        <button onClick={() => startEditing(todo)} className="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
+                          <Edit2 size={12} /> 수정
                         </button>
-                        <button onClick={() => deleteTodo(todo.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 p-1.5 sm:px-3 sm:py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
-                          <Trash2 size={12} /> <span className="hidden sm:inline">삭제</span>
+                        <button onClick={() => deleteTodo(todo.id)} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
+                          <Trash2 size={12} /> 삭제
                         </button>
                       </div>
                     </div>
 
-                    {/* 업무 내용 텍스트 */}
-                    <div className="pl-7 pr-1">
-                      <span className={`text-xs sm:text-sm break-all block ${todo.completed ? 'line-through text-slate-500' : 'text-slate-200'}`}>
+                    {/* 하단 줄: 체크박스 + 업무 내용 */}
+                    <div className="flex items-start gap-3 pt-1">
+                      <button onClick={() => toggleComplete(todo.id, todo.completed)} className="text-slate-400 hover:text-blue-400 mt-0.5 shrink-0">
+                        {todo.completed ? <CheckCircle className="text-blue-500" size={20} /> : <Circle size={20} />}
+                      </button>
+                      <span className={`text-sm break-words flex-1 leading-relaxed ${todo.completed ? 'line-through text-slate-500' : 'text-slate-100'}`}>
                         {todo.task}
                       </span>
                     </div>
